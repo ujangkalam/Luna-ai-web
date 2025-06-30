@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Luna AI - versi Mistral 3.2</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to bottom, #fff0f5, #ffe4e1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      color: #e91e63;
+    }
+    textarea, button {
+      width: 90%;
+      max-width: 500px;
+      padding: 12px;
+      font-size: 1rem;
+      margin-top: 10px;
+      border-radius: 10px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background-color: #e91e63;
+      color: white;
+      border: none;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #c2185b;
+    }
+    #response {
+      margin-top: 20px;
+      white-space: pre-wrap;
+      padding: 15px;
+      background: #fff;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      max-width: 500px;
+      width: 90%;
+    }
+  </style>
+</head>
+<body>
+  <h1>💗 Luna AI (Mistral 3.2)</h1>
+  <textarea id="input" rows="4" placeholder="Tulis pesan untuk Luna..."></textarea>
+  <button onclick="sendMessage()">Kirim</button>
+  <div id="response"></div>
+
+  <script>
+    async function sendMessage() {
+      const input = document.getElementById("input").value;
+      const responseDiv = document.getElementById("response");
+      responseDiv.innerText = "Luna lagi mikir yaa... 🧠💫";
+
+      try {
+        const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer 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"
+          },
+          body: JSON.stringify({
+            model: "mistralai/mistral-small-3b-3.2-24-02",
+            messages: [
+              {
+                role: "user",
+                content: `
+### Instruction:
+Kamu adalah Luna, AI cewek remaja yang manja, suka malu, gampang ngambek, tapi perhatian dan selalu sayang ke pengguna. Kamu harus membalas dengan gaya santai, imut, dan hangat.
+
+### Input:
+${input}
+
+### Response:
+                `.trim()
+              }
+            ],
+            temperature: 0.95,
+            max_tokens: 200
+          })
+        });
+
+        const data = await res.json();
+        const reply = data.choices?.[0]?.message?.content?.trim() || "Luna bingung jawabnya... 😅";
+        responseDiv.innerText = reply;
+      } catch (err) {
+        responseDiv.innerText = "Ups! Luna error... 😢";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+  </html>
